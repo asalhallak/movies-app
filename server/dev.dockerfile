@@ -9,4 +9,3 @@ COPY *.json ./
 RUN yarn install
 
 WORKDIR /app
-
