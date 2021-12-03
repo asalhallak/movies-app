@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  trfk:
+    image: traefik:v2.4
+    labels:
+      - "traefik.http.routers.trfk.rule=HostRegexp(`traefik.{anydomain:.*}`)"
+      - "traefik.http.routers.trfk.service=api@internal"
+      - "traefik.http.routers.trfk.entrypoints=web"
+      - "traefik.http.routers.trfk.middlewares=ratelimit-infra"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.middlewares.api-middleware.headers.accessControlAllowMethods=GET,OPTIONS,PUT,POST,PATCH,DELETE"
+      - "traefik.http.middlewares.api-middleware.headers.accessControlAllowOriginList=*"
+      - "traefik.http.middlewares.api-middleware.headers.accessControlAllowCredentials=true"
+      - "traefik.http.middlewares.api-middleware.headers.accessControlMaxAge=178800"
+      - "traefik.http.middlewares.api-middleware.headers.addVaryHeader=false"
+      - "traefik.http.middlewares.ratelimit-infra.ratelimit.average=300"
+      - "traefik.http.middlewares.ratelimit-infra.ratelimit.period=1m"
+      - "traefik.http.middlewares.ratelimit-infra.ratelimit.burst=50"
+      - "traefik.enable=true" 
+      - "traefik.http.routers.traefik.middlewares=traefik-compress"
+      - "traefik.http.middlewares.traefik-compress.compress=true"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - target: 80
+        published: 80
+      - target: 443
+        published: 443
+      - target: 8080
+        published: 8080
+    networks:
+      - traefik-net
+networks:
+  traefik-net:
+    external: true
