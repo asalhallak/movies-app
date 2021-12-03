@@ -7,7 +7,7 @@ services:
     networks:
       - db-network
   frontend:
-    image: abdullahsensory/movieapp-frontend:1.0.0
+    image: ${FRONTEND_IMAGE}
     labels:
       - 'traefik.http.routers.movie-app-frontend.rule=Host("portal.${url}")'
       - "traefik.http.routers.movie-app-frontend.entrypoints=web"
@@ -17,7 +17,7 @@ services:
     networks:
       - traefik-net
   backend:
-    image: abdullahsensory/movieapp-backend:1.0.0
+    image: ${BACKEND_IMAGE}
     labels:
       - 'traefik.http.routers.movie-app-backend.rule=(Host("portal.${url}") && PathPrefix("/api"))'
       - "traefik.http.routers.movie-app-backend.middlewares=api-middleware"
@@ -26,6 +26,7 @@ services:
       - "traefik.docker.network=traefik-net"
       - "traefik.enable=true" 
     networks:
+      - traefik-net
       - db-network
 networks:
   db-network:

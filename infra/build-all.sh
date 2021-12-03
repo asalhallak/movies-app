@@ -5,7 +5,6 @@ echo \| building frontend...
 echo ------------------------------------------------------------------------------------------
 export version='1.0.0'
 export FRONTEND_IMAGE=${DOCKER_REGISTRY}/movieapp-frontend:${version}
-export DOCKER_HOST=ssh://sensory-root@192.168.152.81
 
 
 cd ${root_dir}/client/
