@@ -4,6 +4,6 @@ WORKDIR /dependencies
 
 COPY *.json ./
 
-RUN yarn install
+RUN npm install
 
 WORKDIR /app
