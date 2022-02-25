@@ -9,6 +9,14 @@ services:
       - "27018:27017"
     networks:
       - db_net
+
+  cache_db:
+    image : "redis:6.2.6"
+    ports:
+      - "6379:6379"
+    networks:
+      - cache_db_net
+
   backend:
     image: "backend:1.0.1"
     build:
@@ -25,8 +33,11 @@ services:
       - "9229:9229"
     networks:
       - db_net
+      - cache_db_net
     depends_on:
       - db
+      - cache_db
+
   frontend:
     image: "frontend:0.1.0"
     volumes:
@@ -44,6 +55,7 @@ services:
       - backend
 networks:
   db_net:
+  cache_db_net:
 volumes:
   db_vol:
   frontend_node_modules:
