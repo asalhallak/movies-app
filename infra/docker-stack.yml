@@ -6,6 +6,12 @@ services:
       - movies_db:/var/lib/postgresql/data
     networks:
       - db-network
+
+  cache_db:
+    image : "redis:6.2.6"
+    networks:
+      - cache_db_net
+
   frontend:
     image: ${FRONTEND_IMAGE}
     labels:
@@ -17,6 +23,7 @@ services:
       - "traefik.enable=true" 
     networks:
       - traefik-net
+
   backend:
     image: ${BACKEND_IMAGE}
     labels:
@@ -29,11 +36,16 @@ services:
     networks:
       - traefik-net
       - db-network
+      - cache_db_net
+
 networks:
   db-network:
     external: false
+  cache_db_net:
+    external: false
   traefik-net:
     external: true
+
 volumes:
   movies_db:
     external: false
